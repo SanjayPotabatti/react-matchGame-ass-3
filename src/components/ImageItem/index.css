@@ -1,0 +1,11 @@
+.liImg {
+  width: 90px;
+}
+.liImageContainer {
+  list-style-type: none;
+}
+@media (min-width: 769px) {
+  .liImg {
+    width: 200px;
+  }
+}

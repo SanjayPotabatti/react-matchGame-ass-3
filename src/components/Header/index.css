@@ -1,0 +1,36 @@
+.headerBgContainer {
+  background-color: #2c0e3a;
+}
+.webLogoImg {
+  width: 120px;
+}
+.timerImg {
+  width: 25px;
+}
+.scoreText {
+  color: #ffffff;
+  font-size: 20px !important;
+  font-weight: bold;
+}
+.heiglightedText {
+  color: #fec653;
+}
+.heiglightedText1 {
+  color: #fec653;
+  font-size: 20px;
+  font-weight: bold;
+}
+@media (min-width: 769px) {
+  .webLogoImg {
+    width: 180px;
+  }
+  .heiglightedText1 {
+    font-size: 25px;
+  }
+  .scoreText {
+    font-size: 25px;
+  }
+  .timerImg {
+    width: 35px;
+  }
+}

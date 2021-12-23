@@ -1,4 +1,9 @@
 import './App.css'
+import {Component} from 'react'
+import Header from './components/Header'
+import TabItem from './components/TabItem'
+import ImageItem from './components/ImageItem'
+import GameOver from './components/GameOver'
 
 // These are the lists used in the application. You can move them to any component needed.
 const tabsList = [
@@ -246,7 +251,119 @@ const imagesList = [
   },
 ]
 
-// Replace your code here
-const App = () => <div>Hello World</div>
+class App extends Component {
+  state = {
+    gameOn: true,
+    scoreValue: 0,
+    timeValue: 60,
+    activeTabId: tabsList[0].tabId,
+    currentImgId: imagesList[0].id,
+    currentImgUrl: imagesList[0].imageUrl,
+  }
+
+  componentDidMount() {
+    this.setTimerInterval()
+  }
+
+  setTimerInterval = () => {
+    this.timerId = setInterval(this.setTimer, 1000)
+  }
+
+  setTimer = () => {
+    const {timeValue} = this.state
+    if (timeValue > 0) {
+      this.setState({timeValue: timeValue - 1})
+    } else {
+      clearInterval(this.timerId)
+      this.setState({gameOn: false})
+    }
+  }
+
+  onChangeTab = tabId => {
+    const {activeTabId} = this.state
+    this.setState({activeTabId: tabId})
+  }
+
+  onClickThumbnail = id => {
+    const {currentImgId} = this.state
+
+    if (id === currentImgId) {
+      this.getRandomImage()
+    } else {
+      this.setState({gameOn: false, timeValue: 0})
+    }
+  }
+
+  getRandomImage = () => {
+    const imgIndex = Math.floor(Math.random() * imagesList.length)
+    const currentImgId = imagesList[imgIndex].id
+    const {scoreValue} = this.state
+    this.setState({
+      currentImgId,
+      scoreValue: scoreValue + 1,
+      currentImgUrl: imagesList[imgIndex].imageUrl,
+    })
+  }
+
+  onClickPlayAgain = () => {
+    this.setState({
+      gameOn: true,
+      scoreValue: 0,
+      timeValue: 60,
+      activeTabId: tabsList[0].tabId,
+      currentImgId: imagesList[0].id,
+      currentImgUrl: imagesList[0].imageUrl,
+    })
+    this.setTimerInterval()
+  }
+
+  getFilteredImages = () => {
+    const {activeTabId} = this.state
+
+    const filteredImagesList = imagesList.filter(
+      eachImgDetails => eachImgDetails.category === activeTabId,
+    )
+    return filteredImagesList
+  }
+
+  render() {
+    const {gameOn, currentImgUrl, scoreValue, timeValue} = this.state
+
+    const filteredImagesList = this.getFilteredImages()
+
+    return (
+      <div className="bgContainer">
+        <Header scoreValue={scoreValue} timeValue={timeValue} />
+        {gameOn ? (
+          <div>
+            <div className="d-flex flex-column justify-content-center align-items-center">
+              <img src={currentImgUrl} alt="match" className="imgStyle mt-4" />
+            </div>
+            <ul className="d-flex flex-row justify-content-center align-items-center p-2">
+              {tabsList.map(eachTab => (
+                <TabItem tabDetails={eachTab} onChangeTab={this.onChangeTab} />
+              ))}
+            </ul>
+            <ul className="d-flex flex-wrap">
+              {filteredImagesList.map(eachImg => (
+                <ImageItem
+                  imageDetails={eachImg}
+                  onClickThumbnail={this.onClickThumbnail}
+                />
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="d-flex flex-row justify-content-center align-items-center">
+            <GameOver
+              scoreValue={scoreValue}
+              onClickPlayAgain={this.onClickPlayAgain}
+            />
+          </div>
+        )}
+      </div>
+    )
+  }
+}
 
 export default App
